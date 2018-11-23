@@ -12,7 +12,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Header title="Zeke Game" menuItems={menuItems}>
+        <Header title="Zeke's Game" menuItems={menuItems}>
           {/* Things here will come inside component via "this.props.children" */}
         </Header>
         <Home />

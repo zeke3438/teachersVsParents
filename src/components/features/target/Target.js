@@ -1,35 +1,44 @@
 import React, { Component } from 'react';
+import store from '../../../config/Store';
 import { connect } from 'react-redux';
  
-
-import walkSprite from './player_walk.png';
 import handleMovement from './Movement';
 
-class Player extends Component {
+class Target extends Component {
     constructor(props){
         super(props);
         this.state = {
+            mouseover: false,
             style: {
                 position: 'absolute',
                 left: this.props.position[0],
                 top: this.props.position[1],
-                backgroundImage: `url('${walkSprite}')`,
-                backgroundPosition: '0 0',
-                width: '40px',
-                height: '40px',
+                width: '10px',
+                height: '10px',
+
+                border: '3px solid white',
+                borderRadius: '50%',
             }
         }
     }
 
-    render(){
+    shouldRender() {
+        return store.getState().map.hover;
+    }
+
+    setNewPosition() {
         const { style } = this.state
-        const el = {
+        const pos = {
             left: this.props.position[0],
             top: this.props.position[1],
         };
-        const combined = { ...style, ...el};
+        const newStyle = this.shouldRender() ? { ...style, ...pos} : { backgroundColor: 'transparent' }
+        return newStyle;
+    }
+
+    render(){
         return (
-            <div style={combined} />
+            <div style={this.setNewPosition()} />
           );
     }
     
@@ -37,11 +46,10 @@ class Player extends Component {
 
 function mapStateToProps(state) {
     return {
-        position: state.player.position
+        position: state.target.position
     }
 }
 
-// TODO: think about implement HOC with the functionality of handleMovement
 export default connect(
     mapStateToProps
-)(handleMovement(Player));
+)(handleMovement(Target));

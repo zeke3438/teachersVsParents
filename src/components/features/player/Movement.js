@@ -1,5 +1,5 @@
 import store from '../../../config/Store';
-import { SPRITE_SIZE } from '../../../config/constants';
+import { SPRITE_SIZE, MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants';
 
 export default function handleMovement(player) {
 
@@ -14,17 +14,23 @@ export default function handleMovement(player) {
             case 40: // DOWN ARROW
                 return [ 0,  1 * SPRITE_SIZE];
             default:
-                break;
+                return [0, 0];
         }
     };
+
+    function observeBoundaries(oldPos, newPos) {
+        return ( 0 <= newPos[0] && newPos[0] < MAP_WIDTH &&
+             0 <= newPos[1] && newPos[1] < MAP_HEIGHT) 
+             ? newPos : oldPos;
+    }
 
     function moveTo(direction) {
         const currentPosition = store.getState().player.position;
         const newPosition = [currentPosition[0] + direction[0],currentPosition[1] + direction[1]]
 
         store.dispatch({
-            type: 'MOVE_PLAYER',
-            payload: newPosition
+            type: 'PLAYER_MOVE',
+            payload: observeBoundaries(currentPosition, newPosition)
         });
     }
 

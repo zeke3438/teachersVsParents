@@ -2,9 +2,9 @@ const initialState = {
     position: [0,0]
 };
 
-const playerReducer = (state = initialState, action) => {
+const targetReducer = (state = initialState, action) => {
     switch(action.type) {
-        case 'PLAYER_MOVE':
+        case 'TARGET_MOVE':
             return {
                 position: action.payload
             }
@@ -13,4 +13,4 @@ const playerReducer = (state = initialState, action) => {
     }
 };
 
-export default playerReducer;
+export default targetReducer;
