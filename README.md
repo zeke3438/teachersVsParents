@@ -3,6 +3,7 @@ Principal sources I'm using to make this project:
 - [React Documentation](https://reactjs.org/docs/getting-started.html)
 - [Reacteroids inspiration](https://github.com/chriz001/Reacteroids/tree/master/src)
 
+_____________________________________
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
