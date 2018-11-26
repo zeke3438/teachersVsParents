@@ -27,9 +27,9 @@ class Player extends Component {
             left: this.props.position[0],
             top: this.props.position[1],
         };
-        const combined = { ...style, ...el};
+        const newStyle = { ...style, ...el};
         return (
-            <div style={combined} />
+            <div style={ newStyle } />
           );
     }
     

@@ -1,42 +1,17 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants';
 
-
 import Player from '../player/Player'
+import Bullet from '../bullet/Bullet'
 import Target from '../target/Target'
 import Map from '../map/Map'
 
 class World extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            fps: 1,
-            now: 0,
-            then: Date.now()
-        }
-        this.bullets = [];
-    }
-    componentDidMount() {
-        requestAnimationFrame(() => {this.update()});
-    }
-
-    update() {
-        this.setState({
-            now: Date.now()
-        });
-        const delta = this.state.now - this.state.then;
-        const interval = 1000/this.state.fps;
-        if (delta > interval) {
-            console.log("tick"); 
-            this.setState({
-                then: this.state.now - (delta % interval)
-            });
-        }
-        // Next frame
-        requestAnimationFrame(() => {this.update()});
-    }
-
     render() {
+        // const bullets = this.props.bullets.map(item => new Bullet(item))
+        // {bullets.forEach(item => item.render())}
+
         return (<div style={{
             margin: '0 auto',
             position: 'relative',
@@ -46,8 +21,17 @@ class World extends React.Component {
             <Map />
             <Player />
             <Target />
+            {this.props.bullets && this.props.bullets.map((item, key) => <Bullet key={key} pos={item.pos}  velocity={item.velocity} />)}    
         </div>);
     }
 }
 
-export default World;
+function mapStateToProps(state) {
+    return {
+        ...state.world,
+    }
+}
+
+export default connect(
+    mapStateToProps
+)(World);

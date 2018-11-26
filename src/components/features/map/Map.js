@@ -4,11 +4,6 @@ import { connect } from 'react-redux';
 
 class Map extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = { x: 0, y: 0 };
-    }
-
     _onMouseLeave() {
         store.dispatch({ type: 'MAP_CURSOR_LEAVE' });
     }
@@ -16,8 +11,26 @@ class Map extends React.Component {
         store.dispatch({ type: 'MAP_CURSOR_ENTER' });
     }
 
+    _onClick(e) {
+        // get player pos
+        const currentPLayerPosition = store.getState().player.position;
+
+        let rect = e.target.getBoundingClientRect();
+        let x = e.clientX - rect.left; //x position within the element.
+        let y = e.clientY - rect.top;  //y position within the element.
+
+        let vec = [ x - currentPLayerPosition[0], y - currentPLayerPosition[1]];
+        const length = Math.sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
+        let velocity = [vec[0]/length, vec[1]/length];
+        store.dispatch({
+            type: 'WORLD_BULLET_ADD',
+            payload: { pos: currentPLayerPosition, velocity }
+        });
+    }
+
     render() {
-        return (<div 
+        return (<div
+                onClick={this._onClick.bind(this)}
                 onMouseLeave={this._onMouseLeave.bind(this)} 
                 onMouseEnter={this._onMouseEnter.bind(this)}
             style={{
@@ -32,7 +45,7 @@ class Map extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        hover: state.map.hover
+        ...state.map,
     }
 }
 
