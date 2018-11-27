@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
-//import store from '../../../config/Store';
-
-import { FPS, BULLET_VELOCITY, MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants';
+import React, { Component } from 'react'
+import { worldBulletCheck } from '../world/Reducer'
+import { FPS, BULLET_VELOCITY, MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants'
 
 class Bullet extends Component {
     constructor(props){
@@ -14,11 +13,9 @@ class Bullet extends Component {
             },
             baseStyle: {
                 position: 'absolute',
-                left: this.props.pos[0],
-                top: this.props.pos[1],
                 width: '20px',
                 height: '20px',
-                backgroundColor: 'green',
+                backgroundColor: '#1E3244',
                 borderRadius: '50%'
             }
         }
@@ -40,9 +37,18 @@ class Bullet extends Component {
                 time: { then: now }
             });
         }
+
+        if(this.deleted) {
+            this.setState({
+                deleted: true
+            });
+            worldBulletCheck()
+        } else {
+            requestAnimationFrame(() => {this.tick()});
+        }
+         
         // Next frame
         this.checkOutOfBounds()
-        requestAnimationFrame(() => {this.tick()});
     }
 
     update() {
@@ -68,7 +74,6 @@ class Bullet extends Component {
         const style = { ...baseStyle, ...position};
         return <div style={style} />;
     }
-    
 }
 
 export default Bullet;

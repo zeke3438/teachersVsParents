@@ -9,10 +9,9 @@ class Target extends Component {
         super(props);
         this.state = {
             mouseover: false,
+            ...props,
             style: {
                 position: 'absolute',
-                left: this.props.position[0],
-                top: this.props.position[1],
                 width: '10px',
                 height: '10px',
 
@@ -29,8 +28,8 @@ class Target extends Component {
     setNewPosition() {
         const { style } = this.state
         const pos = {
-            left: this.props.position[0],
-            top: this.props.position[1],
+            left: this.props.mapPosition[0],
+            top: this.props.mapPosition[1],
         };
         const newStyle = this.shouldRender() ? { ...style, ...pos} : { backgroundColor: 'transparent' }
         return newStyle;
@@ -41,12 +40,11 @@ class Target extends Component {
             <div style={this.setNewPosition()} />
           );
     }
-    
 }
 
 function mapStateToProps(state) {
     return {
-        position: state.target.position
+        ...state.target
     }
 }
 

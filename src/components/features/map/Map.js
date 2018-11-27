@@ -1,14 +1,16 @@
 import React from 'react';
 import store from '../../../config/Store';
+import { SetMapHover } from './Reducer'
+import { worldBulletAdd } from '../world/Reducer' 
 import { connect } from 'react-redux';
 
 class Map extends React.Component {
 
     _onMouseLeave() {
-        store.dispatch({ type: 'MAP_CURSOR_LEAVE' });
+        SetMapHover(false);
     }
     _onMouseEnter() {
-        store.dispatch({ type: 'MAP_CURSOR_ENTER' });
+        SetMapHover(true);
     }
 
     _onClick(e) {
@@ -22,10 +24,8 @@ class Map extends React.Component {
         let vec = [ x - currentPLayerPosition[0], y - currentPLayerPosition[1]];
         const length = Math.sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
         let velocity = [vec[0]/length, vec[1]/length];
-        store.dispatch({
-            type: 'WORLD_BULLET_ADD',
-            payload: { pos: currentPLayerPosition, velocity }
-        });
+        
+        worldBulletAdd({ pos: currentPLayerPosition, velocity })
     }
 
     render() {

@@ -1,3 +1,5 @@
+import store from '../../../config/Store';
+
 const initialState = {
     position: [0,0]
 };
@@ -12,5 +14,12 @@ const playerReducer = (state = initialState, action) => {
             return state
     }
 };
+
+export const playerMove = (direction) => {
+    store.dispatch({
+        type: 'PLAYER_MOVE',
+        payload: direction
+    });
+}
 
 export default playerReducer;

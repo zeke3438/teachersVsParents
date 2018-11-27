@@ -1,6 +1,9 @@
+import store from '../../../config/Store'
+
 const initialState = {
-    bullets: []
-};
+    bullets: [],
+    bulletsOutOfBounds: false
+}
 
 const worldReducer = (state = initialState, action) => {
     switch(action.type) {
@@ -12,11 +15,36 @@ const worldReducer = (state = initialState, action) => {
         case 'WORLD_BULLET_CHECK':
             return {
                 ...state,
-                bullets: state.bullets.map(item => !item.deleted)
+                bulletsOutOfBounds: true
+            }
+        case 'WORLD_BULLET_CHECKED':
+            return {
+                ...state,
+                bulletsOutOfBounds: false
             }
         default:
             return state
     }
-};
+}
 
-export default worldReducer;
+
+export const worldBulletAdd = (bullet) => {
+    store.dispatch({
+        type: 'WORLD_BULLET_ADD',
+        payload: bullet
+    })
+}
+
+export const worldBulletCheck = () => {
+    store.dispatch({
+        type: 'WORLD_BULLET_CHECK'
+    })
+}
+
+export const worldBulletChecked = () => {
+    store.dispatch({
+        type: 'WORLD_BULLET_CHECKED'
+    })
+}
+
+export default worldReducer

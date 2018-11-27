@@ -1,4 +1,5 @@
 import store from '../../../config/Store';
+import {playerMove} from './Reducer'
 import { SPRITE_SIZE, MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants';
 
 export default function handleMovement(player) {
@@ -28,10 +29,7 @@ export default function handleMovement(player) {
         const currentPosition = store.getState().player.position;
         const newPosition = [currentPosition[0] + direction[0],currentPosition[1] + direction[1]]
 
-        store.dispatch({
-            type: 'PLAYER_MOVE',
-            payload: observeBoundaries(currentPosition, newPosition)
-        });
+        playerMove(observeBoundaries(currentPosition, newPosition))
     }
 
     window.addEventListener('keydown', e => {
