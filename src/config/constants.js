@@ -1,4 +1,4 @@
-export const FPS = 30;
+export const FPS = 10;
 
 export const SPRITE_SIZE = 40;
 

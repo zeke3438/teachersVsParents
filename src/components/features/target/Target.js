@@ -16,13 +16,17 @@ class Target extends Component {
                 height: '10px',
 
                 border: '3px solid white',
-                borderRadius: '50%',
+                borderRadius: '50%'
             }
         }
     }
 
     shouldRender() {
-        return store.getState().map.hover;
+        const mapBounds = store.getState().map.bounds
+        const point = this.props.screenPosition
+        let horizontalBounds = mapBounds.x <= point.x && point.x <= mapBounds.x + mapBounds.width
+        let verticalBounds = mapBounds.y <= point.y && point.y <= mapBounds.y + mapBounds.height
+        return (horizontalBounds && verticalBounds)
     }
 
     setNewPosition() {
@@ -37,7 +41,7 @@ class Target extends Component {
 
     render(){
         return (
-            <div style={this.setNewPosition()} />
+            <div className='target' style={this.setNewPosition()} />
           );
     }
 }

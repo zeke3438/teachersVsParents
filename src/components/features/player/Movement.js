@@ -5,14 +5,14 @@ import { SPRITE_SIZE, MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants';
 export default function handleMovement(player) {
 
     function handleKeyDown(e) {
-        switch (e.keyCode) {
-            case 37: // LEFT ARROW
+        switch (e.key) {
+            case 'a': // LEFT ARROW
                 return [-1 * SPRITE_SIZE,  0];
-            case 38: // UP ARROW
+            case 'w': // UP ARROW
                 return [ 0, -1 * SPRITE_SIZE];
-            case 39: // RIGHT ARROW
+            case 'd': // RIGHT ARROW
                 return [ 1 * SPRITE_SIZE,  0];
-            case 40: // DOWN ARROW
+            case 's': // DOWN ARROW
                 return [ 0,  1 * SPRITE_SIZE];
             default:
                 return [0, 0];

@@ -1,7 +1,7 @@
 import store from '../../../config/Store';
 const initialState = {
     mapPosition: [0,0],
-    screenPosition: [0.0]
+    screenPosition: {x: 0, y: 0}
 };
 
 const targetReducer = (state = initialState, action) => {

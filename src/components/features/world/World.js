@@ -1,31 +1,66 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import store from '../../../config/Store'
-import { MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants';
+import store from '../../../config/Store';
+import { bulletAdd } from '../bullets/Reducer';
+import { MAP_HEIGHT, MAP_WIDTH, FPS } from '../../../config/constants';
 
 import Player from '../player/Player'
-import Bullet from '../bullet/Bullet'
 import Target from '../target/Target'
 import Map from '../map/Map'
+import Bullets from '../bullets/Bullets';
 
 class World extends React.Component {
 
-    checkBulletsOutOfBounds() {
-        if (this.props.bullets && this.props.bullets.length === 0) return
-        var i = this.props.bullets.length
-        while (i--) { // Backward loop in order to slice elements
-            let bulletRef = this.props.bullets[i].ref
-            if (bulletRef === undefined) return
-            if(this.props.bullets[i].ref.state.deleted) this.props.bullets.splice(i, 1);
+    constructor(props) {
+        super(props)
+        this.state = {
+            clock: 0,
+            time: {
+                then: Date.now()
+            }
         }
-        store.dispatch({ type: 'WORLD_BULLET_CHECKED' })
+    }
+
+    componentDidMount() {
+        requestAnimationFrame(() => {this.tick()});
+
+        window.addEventListener('click', e => {
+            e.preventDefault();
+            this._onClick(e)
+        });
+    }
+
+    _onClick(e) {
+        // get player pos
+        const currentPLayerPosition = store.getState().player.position;
+
+        let rect = e.target.getBoundingClientRect();
+        let x = e.clientX - rect.left; //x position within the element.
+        let y = e.clientY - rect.top;  //y position within the element.
+
+        let vec = [ x - currentPLayerPosition[0], y - currentPLayerPosition[1]];
+        const length = Math.sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
+        let dir = [vec[0]/length, vec[1]/length];
+        
+        bulletAdd({ pos: currentPLayerPosition, dir, id:this.state.clock })
+    }
+
+    tick() {
+        let { then } = this.state.time
+        let now = Date.now();
+        const delta = now - then;
+        const interval = 1000/FPS;  
+        if (delta > interval && !this.deleted) {
+            this.setState({
+                time: { then: now },
+                clock: (this.state.clock + delta)
+            });
+        }
+        requestAnimationFrame(() => {this.tick()});
     }
 
     render() {
-        
-        if (this.props.bulletsOutOfBounds) this.checkBulletsOutOfBounds()
-
-        return (<div style={{
+        return (<div className='world'
+            style={{
             margin: '0 auto',
             position: 'relative',
             width: MAP_WIDTH+'px',
@@ -34,19 +69,10 @@ class World extends React.Component {
             <Map />
             <Player />
             <Target />
-            {this.props.bullets && this.props.bullets.map((item, key) => 
-                <Bullet key={key} pos={item.pos} velocity={item.velocity} ref={(bulletRef) => {item.ref = bulletRef }} />)
-            }    
+            <Bullets clock={this.state.clock}/>
+            <div className='clock' style={{position:'absolute', right:'0', color:'white'}}>{(this.state.clock / 1000).toFixed(2)}</div>
         </div>);
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        ...state.world,
-    }
-}
-
-export default connect(
-    mapStateToProps
-)(World);
+export default World;

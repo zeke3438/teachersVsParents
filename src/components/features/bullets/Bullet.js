@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import { worldBulletCheck } from '../world/Reducer'
-import { FPS, BULLET_VELOCITY, MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants'
+import { BULLET_VELOCITY, MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants'
 
 class Bullet extends Component {
     constructor(props){
@@ -19,36 +18,6 @@ class Bullet extends Component {
                 borderRadius: '50%'
             }
         }
-    }
-
-    componentDidMount() {
-        requestAnimationFrame(() => {this.tick()});
-    }
-
-    tick() {
-        let { then } = this.state.time
-        let now = Date.now();
-
-        const delta = now - then;
-        const interval = 1000/FPS;  
-        if (delta > interval && !this.deleted) {
-            this.update();
-            this.setState({
-                time: { then: now }
-            });
-        }
-
-        if(this.deleted) {
-            this.setState({
-                deleted: true
-            });
-            worldBulletCheck()
-        } else {
-            requestAnimationFrame(() => {this.tick()});
-        }
-         
-        // Next frame
-        this.checkOutOfBounds()
     }
 
     update() {

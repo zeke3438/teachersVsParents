@@ -29,7 +29,7 @@ class Player extends Component {
         };
         const newStyle = { ...style, ...el};
         return (
-            <div style={ newStyle } />
+            <div className='player' style={ newStyle } />
           );
     }
     
