@@ -9,3 +9,7 @@ body {
 
   background-color: #282c34;
 }
+
+.world div {
+  cursor: none;
+}

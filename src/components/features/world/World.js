@@ -41,7 +41,8 @@ class World extends React.Component {
         const length = Math.sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
         let dir = [vec[0]/length, vec[1]/length];
         
-        bulletAdd({ pos: currentPLayerPosition, dir, id:this.state.clock })
+        if (store.getState().target.insideMap) 
+            bulletAdd({ pos: currentPLayerPosition, dir, id:this.state.clock })
     }
 
     tick() {
@@ -55,6 +56,7 @@ class World extends React.Component {
                 clock: (this.state.clock + delta)
             });
         }
+
         requestAnimationFrame(() => {this.tick()});
     }
 
@@ -64,7 +66,9 @@ class World extends React.Component {
             margin: '0 auto',
             position: 'relative',
             width: MAP_WIDTH+'px',
-            height: MAP_HEIGHT+'px'
+            height: MAP_HEIGHT+'px',
+            backgroundColor: 'white',
+            border: '2px solid white'
         }}>
             <Map />
             <Player />

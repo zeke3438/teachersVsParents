@@ -22,11 +22,7 @@ class Target extends Component {
     }
 
     shouldRender() {
-        const mapBounds = store.getState().map.bounds
-        const point = this.props.screenPosition
-        let horizontalBounds = mapBounds.x <= point.x && point.x <= mapBounds.x + mapBounds.width
-        let verticalBounds = mapBounds.y <= point.y && point.y <= mapBounds.y + mapBounds.height
-        return (horizontalBounds && verticalBounds)
+        return store.getState().target.insideMap
     }
 
     setNewPosition() {

@@ -4,12 +4,9 @@ import { BULLET_VELOCITY, MAP_HEIGHT, MAP_WIDTH } from '../../../config/constant
 class Bullet extends Component {
     constructor(props){
         super(props);
-        this.deleted = false;
+        this.position = props.pos
+        this.timeOffset = props.clock
         this.state = {
-            ...this.props,
-            time: {
-                then: Date.now()
-            },
             baseStyle: {
                 position: 'absolute',
                 width: '20px',
@@ -18,27 +15,29 @@ class Bullet extends Component {
                 borderRadius: '50%'
             }
         }
+        this.deleted = false
     }
 
-    update() {
-        let { velocity , pos } = this.state
-        let newPos = [pos[0] + velocity[0] * BULLET_VELOCITY, pos[1] + velocity[1] * BULLET_VELOCITY]
-        this.setState({
-            pos: newPos
-        });
-    }
+    newPosition() {
+        let x = this.position[0] + this.props.dir[0] * BULLET_VELOCITY * ((this.props.clock - this.timeOffset)/1000)
+        let y = this.position[1] + this.props.dir[1] * BULLET_VELOCITY * ((this.props.clock - this.timeOffset)/1000)
 
-    checkOutOfBounds() {
-        const { pos } = this.state;
-        this.deleted = !(0 <= pos[0] && pos[0] < MAP_WIDTH && 0 <= pos[1] && pos[1] < MAP_HEIGHT)
+        if(!(0 <= x && x <= MAP_WIDTH && 0 <= y && y <= MAP_HEIGHT) ){
+            this.props.deleteBullet(this.props.id);
+            this.deleted = true
+        }
+            
+        return {
+            left: x,
+            top: y,
+        };
     }
 
     render(){
+        if (this.deleted) return null
+
         const { baseStyle } = this.state
-        const position = {
-            left: this.state.pos[0],
-            top: this.state.pos[1],
-        };
+        const position = this.newPosition()
 
         const style = { ...baseStyle, ...position};
         return <div style={style} />;

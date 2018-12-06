@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { BULLET_VELOCITY } from '../../../config/constants'
+import { MAP_HEIGHT } from '../../../config/constants'
+import { bulletRemove } from './Reducer'
 
-// import { bulletsUpdate } from './Reducer'
 
 import Bullet from './Bullet'
 
@@ -10,23 +10,19 @@ class Bullets extends Component {
 
     constructor(props) {
         super(props)
-        this.bullets = []
+        this.bulletsToDelete = []
     }
 
-    componentWillUpdate(props){
-        // bulletsUpdate(props.clock - this.props.clock)
-        let delta = props.clock - this.props.clock
+    deleteBullet(id) {
+        this.bulletsToDelete.push(id)
+    }
 
-        this.bullets = props.bullets.map(bullet => {
-            return {
-                pos: [
-                    bullet.pos[0] + bullet.dir[0] + BULLET_VELOCITY * delta,
-                    bullet.pos[1] + bullet.dir[1] + BULLET_VELOCITY * delta
-                ],
-                dir: bullet.dir,
-                id: bullet.id
-            }
-        })
+    componentWillReceiveProps() {
+        // if (this.bulletsToDelete.length > 0) {
+        //     let ids = this.bulletsToDelete
+        //     bulletRemove(idss)
+        //     this.bulletsToDelete = []
+        // }
     }
 
     render(){
@@ -36,13 +32,12 @@ class Bullets extends Component {
                     position: 'absolute',
                     width: '100%',
                     height: '100%',
-                    marginTop: '-604px',
-                    marginLeft: '4px',
+                    marginTop: '-'+ MAP_HEIGHT +'px',
                 }}>
-            {this.bullets && this.bullets.map((item, key) => 
-                <Bullet key={key} pos={item.pos} />)
-            } 
-            </div>    
+                {this.props.bullets && this.props.bullets.map((item, key) => 
+                    <Bullet key={key} id={item.id} clock={this.props.clock} pos={item.pos} dir={item.dir} deleteBullet={this.deleteBullet.bind(this)}/>
+                )}
+            </div>
         )
     }
 }

@@ -14,8 +14,7 @@ class Map extends React.Component {
             style={{
                 width: '100%',
                 height: '100%',
-                backgroundColor: 'chocolate',
-                border: '4px solid white'
+                backgroundColor: 'chocolate'
             }}>
         </div>);
     }

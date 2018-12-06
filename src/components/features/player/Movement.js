@@ -1,5 +1,5 @@
 import store from '../../../config/Store';
-import {playerMove} from './Reducer'
+import { playerMove, faceToNorth, faceToSouth, faceToEast, faceToWest } from './Reducer'
 import { SPRITE_SIZE, MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants';
 
 export default function handleMovement(player) {
@@ -7,12 +7,16 @@ export default function handleMovement(player) {
     function handleKeyDown(e) {
         switch (e.key) {
             case 'a': // LEFT ARROW
+                faceToWest()
                 return [-1 * SPRITE_SIZE,  0];
             case 'w': // UP ARROW
+                faceToNorth()
                 return [ 0, -1 * SPRITE_SIZE];
             case 'd': // RIGHT ARROW
+                faceToEast()
                 return [ 1 * SPRITE_SIZE,  0];
             case 's': // DOWN ARROW
+                faceToSouth()
                 return [ 0,  1 * SPRITE_SIZE];
             default:
                 return [0, 0];

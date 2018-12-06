@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { SPRITE_SIZE } from '../../../config/constants'
  
 
-import walkSprite from './player_walk.png';
+import walkSprite from './player.png';
 import handleMovement from './Movement';
 
 class Player extends Component {
@@ -11,12 +12,9 @@ class Player extends Component {
         this.state = {
             style: {
                 position: 'absolute',
-                left: this.props.position[0],
-                top: this.props.position[1],
                 backgroundImage: `url('${walkSprite}')`,
-                backgroundPosition: '0 0',
-                width: '40px',
-                height: '40px',
+                width: SPRITE_SIZE + 'px',
+                height: SPRITE_SIZE + 'px',
             }
         }
     }
@@ -26,6 +24,7 @@ class Player extends Component {
         const el = {
             left: this.props.position[0],
             top: this.props.position[1],
+            backgroundPosition: this.props.spriteLocation[0] + 'px ' + this.props.spriteLocation[1] + 'px',
         };
         const newStyle = { ...style, ...el};
         return (
@@ -37,7 +36,7 @@ class Player extends Component {
 
 function mapStateToProps(state) {
     return {
-        position: state.player.position
+        ...state.player
     }
 }
 

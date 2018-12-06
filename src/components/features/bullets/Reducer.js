@@ -2,7 +2,6 @@ import store from '../../../config/Store'
 
 const initialState = {
     bullets: [],
-    bulletsOutOfBounds: false
 }
 
 const bulletsReducer = (state = initialState, action) => {
@@ -12,10 +11,17 @@ const bulletsReducer = (state = initialState, action) => {
                 ...state,
                 bullets: state.bullets.concat(action.payload)
             }
-        case 'BULLET_UPDATE':
+        case 'BULLET_REMOVE':
             return {
                 ...state,
-                // bullets: updatedBullets
+                bullets: state.bullets.filter(bullet =>  
+                    action.payload.includes(bullet.id)
+                )
+            }
+        case 'BULLET_CLEAN':
+            return {
+                ...state,
+                bullets: state.bullets.filter(bullet => !bullet.deleted)
             }
         default:
             return state
@@ -25,16 +31,21 @@ const bulletsReducer = (state = initialState, action) => {
 export const bulletAdd = (bullet) => {
     store.dispatch({
         type: 'BULLET_ADD',
-        payload: bullet
+        payload: { ...bullet, deleted: false }
     })
 }
 
-export const bulletsUpdate = (delta) => {
+export const bulletRemove = (bullets) => {
     store.dispatch({
-        type: 'BULLET_UPDATE',
-        payload: delta
+        type: 'BULLET_REMOVE',
+        payload: bullets
     })
 }
 
+export const bulletClean = () => {
+    store.dispatch({
+        type: 'BULLET_CLEAN'
+    })
+}
 
 export default bulletsReducer
