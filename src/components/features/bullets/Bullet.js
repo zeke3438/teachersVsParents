@@ -13,9 +13,8 @@ class Bullet extends Component {
                 height: '20px',
                 backgroundColor: '#1E3244',
                 borderRadius: '50%'
-            }
+            },
         }
-        this.deleted = false
     }
 
     newPosition() {
@@ -24,18 +23,12 @@ class Bullet extends Component {
 
         if(!(0 <= x && x <= MAP_WIDTH && 0 <= y && y <= MAP_HEIGHT) ){
             this.props.deleteBullet(this.props.id);
-            this.deleted = true
-        }
-            
-        return {
-            left: x,
-            top: y,
-        };
+        }  
+
+        return { left: x, top: y, };
     }
 
     render(){
-        if (this.deleted) return null
-
         const { baseStyle } = this.state
         const position = this.newPosition()
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import store from '../../../config/Store';
-import { bulletAdd } from '../bullets/Reducer';
+import { bulletAdd, bulletClean } from '../bullets/Reducer';
 import { MAP_HEIGHT, MAP_WIDTH, FPS } from '../../../config/constants';
 
 import Player from '../player/Player'
@@ -18,6 +18,7 @@ class World extends React.Component {
                 then: Date.now()
             }
         }
+        this.deletedItems = []
     }
 
     componentDidMount() {
@@ -51,6 +52,9 @@ class World extends React.Component {
         const delta = now - then;
         const interval = 1000/FPS;  
         if (delta > interval && !this.deleted) {
+            
+            this.clearWorld()
+
             this.setState({
                 time: { then: now },
                 clock: (this.state.clock + delta)
@@ -58,6 +62,16 @@ class World extends React.Component {
         }
 
         requestAnimationFrame(() => {this.tick()});
+    }
+
+    clearWorld() {
+        bulletClean(this.deletedItems.filter(item => item.type === 'bullet').map(item => item.id))
+
+        this.deletedItems = []
+    }
+
+    deleteComponent(component) {
+        this.deletedItems.push(component)
     }
 
     render() {
@@ -73,7 +87,7 @@ class World extends React.Component {
             <Map />
             <Player />
             <Target />
-            <Bullets clock={this.state.clock}/>
+            <Bullets clock={this.state.clock} deleteComponent={this.deleteComponent.bind(this)}/>
             <div className='clock' style={{position:'absolute', right:'0', color:'white'}}>{(this.state.clock / 1000).toFixed(2)}</div>
         </div>);
     }

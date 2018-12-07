@@ -1,28 +1,14 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux';
+import { connect } from 'react-redux'
 import { MAP_HEIGHT } from '../../../config/constants'
-import { bulletRemove } from './Reducer'
 
 
 import Bullet from './Bullet'
 
 class Bullets extends Component {
 
-    constructor(props) {
-        super(props)
-        this.bulletsToDelete = []
-    }
-
     deleteBullet(id) {
-        this.bulletsToDelete.push(id)
-    }
-
-    componentWillReceiveProps() {
-        // if (this.bulletsToDelete.length > 0) {
-        //     let ids = this.bulletsToDelete
-        //     bulletRemove(idss)
-        //     this.bulletsToDelete = []
-        // }
+        this.props.deleteComponent({type: 'bullet', id: id})
     }
 
     render(){

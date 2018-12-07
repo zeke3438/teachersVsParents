@@ -11,17 +11,16 @@ const bulletsReducer = (state = initialState, action) => {
                 ...state,
                 bullets: state.bullets.concat(action.payload)
             }
-        case 'BULLET_REMOVE':
-            return {
-                ...state,
-                bullets: state.bullets.filter(bullet =>  
-                    action.payload.includes(bullet.id)
-                )
-            }
         case 'BULLET_CLEAN':
+
+            // if (action.payload.length > 0) {
+            //     console.log('buulets', state.bullets)
+            //     console.log('request to delete', action.payload)
+            // } 
+
             return {
                 ...state,
-                bullets: state.bullets.filter(bullet => !bullet.deleted)
+                bullets: state.bullets.filter(bullet => !action.payload.includes(bullet.id))
             }
         default:
             return state
@@ -31,20 +30,14 @@ const bulletsReducer = (state = initialState, action) => {
 export const bulletAdd = (bullet) => {
     store.dispatch({
         type: 'BULLET_ADD',
-        payload: { ...bullet, deleted: false }
+        payload: { ...bullet }
     })
 }
 
-export const bulletRemove = (bullets) => {
+export const bulletClean = (data) => {
     store.dispatch({
-        type: 'BULLET_REMOVE',
-        payload: bullets
-    })
-}
-
-export const bulletClean = () => {
-    store.dispatch({
-        type: 'BULLET_CLEAN'
+        type: 'BULLET_CLEAN',
+        payload: data
     })
 }
 
