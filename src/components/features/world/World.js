@@ -1,12 +1,13 @@
 import React from 'react';
 import store from '../../../config/Store';
-import { bulletAdd, bulletClean } from '../bullets/Reducer';
+import { bulletAdd } from '../bullets/Reducer';
 import { MAP_HEIGHT, MAP_WIDTH, FPS } from '../../../config/constants';
 
 import Player from '../player/Player'
 import Target from '../target/Target'
 import Map from '../map/Map'
 import Bullets from '../bullets/Bullets';
+import Enemies from '../enemies/Enemies';
 
 class World extends React.Component {
 
@@ -18,7 +19,7 @@ class World extends React.Component {
                 then: Date.now()
             }
         }
-        this.deletedItems = []
+        this.references = []
     }
 
     componentDidMount() {
@@ -53,7 +54,9 @@ class World extends React.Component {
         const interval = 1000/FPS;  
         if (delta > interval && !this.deleted) {
             
-            this.clearWorld()
+            this.references.forEach(ref => {
+                if(ref.update) ref.update()
+            })
 
             this.setState({
                 time: { then: now },
@@ -64,14 +67,8 @@ class World extends React.Component {
         requestAnimationFrame(() => {this.tick()});
     }
 
-    clearWorld() {
-        bulletClean(this.deletedItems.filter(item => item.type === 'bullet').map(item => item.id))
-
-        this.deletedItems = []
-    }
-
-    deleteComponent(component) {
-        this.deletedItems.push(component)
+    setRef(obj) {
+        this.references.push(obj);
     }
 
     render() {
@@ -87,7 +84,8 @@ class World extends React.Component {
             <Map />
             <Player />
             <Target />
-            <Bullets clock={this.state.clock} deleteComponent={this.deleteComponent.bind(this)}/>
+            <Bullets clock={this.state.clock} setRef={this.setRef.bind(this)}/>
+            <Enemies clock={this.state.clock} setRef={this.setRef.bind(this)}/>
             <div className='clock' style={{position:'absolute', right:'0', color:'white'}}>{(this.state.clock / 1000).toFixed(2)}</div>
         </div>);
     }

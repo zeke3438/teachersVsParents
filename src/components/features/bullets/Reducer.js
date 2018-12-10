@@ -11,16 +11,10 @@ const bulletsReducer = (state = initialState, action) => {
                 ...state,
                 bullets: state.bullets.concat(action.payload)
             }
-        case 'BULLET_CLEAN':
-
-            // if (action.payload.length > 0) {
-            //     console.log('buulets', state.bullets)
-            //     console.log('request to delete', action.payload)
-            // } 
-
+        case 'BULLET_DELETE':
             return {
                 ...state,
-                bullets: state.bullets.filter(bullet => !action.payload.includes(bullet.id))
+                bullets: state.bullets.filter(bullet => action.payload !== bullet.id)
             }
         default:
             return state
@@ -34,10 +28,10 @@ export const bulletAdd = (bullet) => {
     })
 }
 
-export const bulletClean = (data) => {
+export const bulletDelete = (id) => {
     store.dispatch({
-        type: 'BULLET_CLEAN',
-        payload: data
+        type: 'BULLET_DELETE',
+        payload: id
     })
 }
 

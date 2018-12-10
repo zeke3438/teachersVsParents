@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { MAP_HEIGHT } from '../../../config/constants'
+import { MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants'
+import { enemyAdd } from './Reducer'
 
-import Bullet from './Bullet'
+import Enemy from './Enemy'
 
-class Bullets extends Component {
+class Enemies extends Component {
 
     constructor(props) {
         super(props)
@@ -13,6 +14,8 @@ class Bullets extends Component {
 
     componentDidMount() {
         this.props.setRef(this)
+        let pos = [Math.random() * (MAP_WIDTH), Math.random() * (MAP_HEIGHT)]
+        enemyAdd({ pos, id:this.props.clock })
     }
 
     setRef(obj) {
@@ -20,22 +23,22 @@ class Bullets extends Component {
     }
 
     update() {
-        this.props.bullets.forEach(bullet => {
-            if (bullet.ref.update) bullet.ref.update() 
+        this.props.enemies.forEach(enemy => {
+            if (enemy.ref.update) enemy.ref.update() 
         })
     }
 
     render(){
         return(
-            <div className= 'bullets'
+            <div className= 'enemies'
                 style={{
                     position: 'absolute',
                     width: '100%',
                     height: '100%',
                     marginTop: '-'+ MAP_HEIGHT +'px',
                 }}>
-                {this.props.bullets && this.props.bullets.map((item, key) => 
-                    <Bullet key={key} id={item.id} clock={this.props.clock} pos={item.pos} dir={item.dir} ref={ref => item.ref=ref}/>
+                {this.props.enemies && this.props.enemies.map((item, key) => 
+                    <Enemy key={key} id={item.id} clock={this.props.clock} pos={item.pos} dir={item.dir} ref={ref => item.ref=ref}/>
                 )}
             </div>
         )
@@ -44,10 +47,10 @@ class Bullets extends Component {
 
 function mapStateToProps(state) {
     return {
-        ...state.bullets,
+        ...state.enemies,
     }
 }
 
 export default connect(
     mapStateToProps
-)(Bullets);
+)(Enemies);
