@@ -26,10 +26,11 @@ class Target extends Component {
     }
 
     setNewPosition() {
+        const bounds = store.getState().map.bounds
         const { style } = this.state
         const pos = {
-            left: this.props.mapPosition[0],
-            top: this.props.mapPosition[1],
+            left: this.props.screenPosition.x - bounds.x,
+            top: this.props.screenPosition.y - bounds.y,
         };
         const newStyle = this.shouldRender() ? { ...style, ...pos} : { backgroundColor: 'transparent' }
         return newStyle;

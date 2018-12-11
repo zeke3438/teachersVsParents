@@ -10,8 +10,7 @@ const targetReducer = (state = initialState, action) => {
         case 'TARGET_MOVE':
             return {
                 ...state,
-                mapPosition: action.payload.positions.map,
-                screenPosition: action.payload.positions.screen,
+                screenPosition: action.payload.screen,
                 insideMap: action.payload.insideMap
             }
         default:
@@ -19,17 +18,16 @@ const targetReducer = (state = initialState, action) => {
     }
 };
 
-export const targetMove = (positions) => {
+export const targetMove = (screen) => {
 
     const mapBounds = store.getState().map.bounds
-    const point = positions.screen
-    let horizontalBounds = mapBounds.x <= point.x && point.x <= mapBounds.x + mapBounds.width
-    let verticalBounds = mapBounds.y <= point.y && point.y <= mapBounds.y + mapBounds.height
+    let horizontalBounds = mapBounds.x <= screen.x && screen.x <= mapBounds.x + mapBounds.width
+    let verticalBounds = mapBounds.y <= screen.y && screen.y <= mapBounds.y + mapBounds.height
     const insideMap = (horizontalBounds && verticalBounds)
 
     store.dispatch({
         type: 'TARGET_MOVE',
-        payload: { positions, insideMap }
+        payload: { screen, insideMap }
     });
 }
 

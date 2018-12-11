@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import store from '../../../config/Store';
+import store from '../../../config/Store'
 import { SPRITE_SIZE, MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants'
-import { enemyDelete,  enemyMove } from './Reducer'
+import { enemyMove } from './Reducer'
 
+import walkSprite from './enemy.png';
 
 class Enemy extends Component {
     constructor(props){
@@ -10,26 +11,41 @@ class Enemy extends Component {
         this.state = {
             baseStyle: {
                 position: 'absolute',
-                width: '32px',
-                height: '32px',
-                backgroundColor: '#FFFFFF',
+                width: SPRITE_SIZE + 'px',
+                height: SPRITE_SIZE + 'px',
+                backgroundImage: `url('${walkSprite}')`,
             },
+            lastClock: 0,
+            lastDirection: [0, 0],
             deleted: false,
             x: props.pos[0],
             y: props.pos[1]
         }
     }
 
-    update() {
-        this.moveTo(this.getDirection())
-        if (this.state.deleted) enemyDelete(this.props.id)
+    update(enemy) {
+        this.moveTo(enemy, this.getDirection(enemy))
+        // if (this.state.deleted) enemyDelete(this.props.id)
     }
 
-    moveTo(direction) {
-        // const currentPosition = store.getState().enemy.position;
-        // const newPosition = [currentPosition[0] + direction[0],currentPosition[1] + direction[1]]
+    moveTo(current, direction) {
+        if(this.shouldMove()) {
+            const currentPosition = current.pos;
+            const newPosition = [currentPosition[0] + (direction[0]*SPRITE_SIZE),currentPosition[1] + (direction[1]*SPRITE_SIZE)]
+            const position = this.observeBoundaries(currentPosition, newPosition)
+            enemyMove(this.props.id, position)
+            this.setState({
+                lastClock: this.props.clock,
+                x: position[0],
+                y: position[1]
+            })
+        }
+    }
 
-        // enemyMove(this.observeBoundaries(currentPosition, newPosition))
+    shouldMove() {
+        let clock = this.props.clock
+        let delta = (Math.random() * 700) + 300 // from 300 to 1000
+        return clock > this.state.lastClock + delta
     }
 
     observeBoundaries(oldPos, newPos) {
@@ -38,27 +54,20 @@ class Enemy extends Component {
              ? newPos : oldPos;
     }
 
-    getDirection() {
-        switch (Math.floor(Math.random() * 3)) {
-            case 0: // LEFT ARROW
-                //faceToWest()
-                return [-1 * SPRITE_SIZE,  0];
-            case 1: // UP ARROW
-                //faceToNorth()
-                return [ 0, -1 * SPRITE_SIZE];
-            case 2: // RIGHT ARROW
-                //faceToEast()
-                return [ 1 * SPRITE_SIZE,  0];
-            case 3: // DOWN ARROW
-                //faceToSouth()
-                return [ 0,  1 * SPRITE_SIZE];
-            default:
-                return [0, 0];
-        }
+    getDirection(current) {
+        const playerPos = store.getState().player.position
+        const moveX = [ current.pos[0] < playerPos[0] ? 1 : -1, 0 ]
+        const moveY = [ 0, current.pos[1] < playerPos[1] ? 1 : -1 ]
+        if (this.touchPLayer(current, playerPos)) return [0, 0]
+        return Math.random() < .5? moveX : moveY
+    }
+
+    touchPLayer(current, playerPos) {
+        return current.pos[0]===playerPos[0] && current.pos[1]===playerPos[1]
     }
 
     newPosition() {
-        return { left: this.state.x, top: this.state.y, };
+        return { left: this.state.x, top: this.state.y, backgroundPosition: (this.props.spriteLocation[0] * SPRITE_SIZE) + 'px ' + (this.props.spriteLocation[1] * SPRITE_SIZE) + 'px',}
     }
 
     render(){

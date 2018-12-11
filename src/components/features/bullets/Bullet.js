@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
-import { BULLET_VELOCITY, MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants'
+import { BULLET_VELOCITY, MAP_HEIGHT, MAP_WIDTH, SPRITE_SIZE } from '../../../config/constants'
 import { bulletDelete } from './Reducer'
+
+import sprite from './bullet.png';
 
 class Bullet extends Component {
     constructor(props){
@@ -8,11 +10,13 @@ class Bullet extends Component {
         this.state = {
             baseStyle: {
                 position: 'absolute',
-                width: '20px',
-                height: '20px',
-                backgroundColor: '#1E3244',
-                borderRadius: '50%'
+                width: SPRITE_SIZE + 'px',
+                height: SPRITE_SIZE + 'px',
+                backgroundImage: `url('${sprite}')`,
+                backgroundRepeatX: 'no-repeat',
+                backgroundRepeatY: 'no-repeat'
             },
+            angular_velocity: Math.random() * 10 + 5,
             deleted: false,
             x: props.pos[0],
             y: props.pos[1]
@@ -32,7 +36,7 @@ class Bullet extends Component {
     }
 
     newPosition() {
-        return { left: this.state.x, top: this.state.y, };
+        return { left: this.state.x, top: this.state.y, transform: 'rotate('+ this.props.clock/this.state.angular_velocity +'deg)' };
     }
 
     render(){

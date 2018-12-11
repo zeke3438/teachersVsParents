@@ -32,6 +32,7 @@ class World extends React.Component {
     }
 
     _onClick(e) {
+        if (store.getState().bullets.bullets.length > 5) return
         // get player pos
         const currentPLayerPosition = store.getState().player.position;
 
@@ -83,9 +84,9 @@ class World extends React.Component {
         }}>
             <Map />
             <Player />
-            <Target />
             <Bullets clock={this.state.clock} setRef={this.setRef.bind(this)}/>
             <Enemies clock={this.state.clock} setRef={this.setRef.bind(this)}/>
+            <Target />
             <div className='clock' style={{position:'absolute', right:'0', color:'white'}}>{(this.state.clock / 1000).toFixed(2)}</div>
         </div>);
     }

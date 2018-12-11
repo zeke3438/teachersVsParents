@@ -21,7 +21,7 @@ class Bullets extends Component {
 
     update() {
         this.props.bullets.forEach(bullet => {
-            if (bullet.ref.update) bullet.ref.update() 
+            if (bullet.ref && bullet.ref.update) bullet.ref.update()
         })
     }
 

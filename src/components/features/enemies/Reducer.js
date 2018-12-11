@@ -1,5 +1,4 @@
 import store from '../../../config/Store'
-import { SPRITE_SIZE } from '../../../config/constants';
 
 const initialState = {
     enemies: []
@@ -20,12 +19,14 @@ const enemiesReducer = (state = initialState, action) => {
         case 'ENEMY_MOVE':
             return {
                 ...state,
-                position: action.payload
-            }
-        case 'ENEMY_TO':
-            state.spriteLocation[1] = action.payload * SPRITE_SIZE
-            return {
-                ...state,
+                enemies: state.enemies.map(enemy => {
+                    enemy.spriteLocation[0] = (enemy.spriteLocation[0] + 1) % 3
+                    if (enemy.id === action.payload.id) {
+                        enemy.pos = action.payload.position
+                    }
+
+                    return enemy
+                })
             }
         default:
             return state
@@ -35,14 +36,14 @@ const enemiesReducer = (state = initialState, action) => {
 export const enemyAdd = (enemy) => {
     store.dispatch({
         type: 'ENEMY_ADD',
-        payload: { ...enemy }
+        payload: { ...enemy, spriteLocation: [0,0] }
     })
 }
 
-export const enemyMove = (direction) => {
+export const enemyMove = (id, position) => {
     store.dispatch({
         type: 'ENEMY_MOVE',
-        payload: direction
+        payload: {id, position}
     });
 }
 
