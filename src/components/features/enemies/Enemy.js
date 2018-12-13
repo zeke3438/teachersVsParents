@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import store from '../../../config/Store'
 import { SPRITE_SIZE, MAP_HEIGHT, MAP_WIDTH } from '../../../config/constants'
-import { enemyMove } from './Reducer'
 
 import walkSprite from './enemy.png';
+import bambooSprite from '../bullets/bullet.png';
 
 class Enemy extends Component {
     constructor(props){
@@ -15,9 +15,17 @@ class Enemy extends Component {
                 height: SPRITE_SIZE + 'px',
                 backgroundImage: `url('${walkSprite}')`,
             },
+            bambooStyle: {
+                backgroundImage: `url('${bambooSprite}')`,
+                width: SPRITE_SIZE + 'px',
+                height: SPRITE_SIZE + 'px',
+                backgroundRepeatX: 'no-repeat',
+                backgroundRepeatY: 'no-repeat',
+                rigth: '0',
+
+            },
             lastClock: 0,
             lastDirection: [0, 0],
-            deleted: false,
             x: props.pos[0],
             y: props.pos[1]
         }
@@ -25,17 +33,16 @@ class Enemy extends Component {
 
     update(enemy) {
         this.moveTo(enemy, this.getDirection(enemy))
-        // if (this.state.deleted) enemyDelete(this.props.id)
     }
 
     moveTo(current, direction) {
-        if(this.shouldMove()) {
-            const currentPosition = current.pos;
-            const newPosition = [currentPosition[0] + (direction[0]*SPRITE_SIZE),currentPosition[1] + (direction[1]*SPRITE_SIZE)]
-            const position = this.observeBoundaries(currentPosition, newPosition)
-            enemyMove(this.props.id, position)
+        const currentPosition = current.pos;
+        let position = [currentPosition[0] + (direction[0]*SPRITE_SIZE),currentPosition[1] + (direction[1]*SPRITE_SIZE)]
+        if(this.shouldMove() && !this.takenPosition(position)) {
+            if(!current.beaten) position = this.observeBoundaries(currentPosition, position)
             this.setState({
                 lastClock: this.props.clock,
+                beaten: current.beaten,
                 x: position[0],
                 y: position[1]
             })
@@ -48,10 +55,16 @@ class Enemy extends Component {
         return clock > this.state.lastClock + delta
     }
 
+    takenPosition(position) {
+        let current = store.getState().enemies.enemies.map(enemy => {return enemy.pos})
+        let taken = current.findIndex(currentPosition => { return currentPosition[0] === position[0] && currentPosition[1] === position[1] })
+        return taken > -1
+    }
+
     observeBoundaries(oldPos, newPos) {
-        return ( 0 <= newPos[0] && newPos[0] < MAP_WIDTH &&
-             0 <= newPos[1] && newPos[1] < MAP_HEIGHT) 
-             ? newPos : oldPos;
+        return ( 0 <= newPos[0] && newPos[0] < MAP_WIDTH && 
+             0 <= newPos[1] && newPos[1] < MAP_HEIGHT) ?
+            newPos : oldPos;
     }
 
     getDirection(current) {
@@ -59,11 +72,12 @@ class Enemy extends Component {
         const moveX = [ current.pos[0] < playerPos[0] ? 1 : -1, 0 ]
         const moveY = [ 0, current.pos[1] < playerPos[1] ? 1 : -1 ]
         if (this.touchPLayer(current, playerPos)) return [0, 0]
+        if (current.beaten) return [-1, 0]
         return Math.random() < .5? moveX : moveY
     }
 
     touchPLayer(current, playerPos) {
-        return current.pos[0]===playerPos[0] && current.pos[1]===playerPos[1]
+        return current.pos[0] === playerPos[0] && current.pos[1] === playerPos[1]
     }
 
     newPosition() {
@@ -74,9 +88,9 @@ class Enemy extends Component {
         if (this.deleted) return null
         const { baseStyle } = this.state
         const position = this.newPosition()
-
         const style = { ...baseStyle, ...position};
-        return <div style={style} />;
+        const bamboo = this.state.beaten ? this.state.bambooStyle : null
+        return <div style={style}><div style={bamboo}></div></div> ;
     }
 }
 

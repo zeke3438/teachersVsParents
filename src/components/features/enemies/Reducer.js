@@ -1,4 +1,5 @@
 import store from '../../../config/Store'
+import { MAP_WIDTH, MAP_HEIGHT } from '../../../config/constants'
 
 const initialState = {
     enemies: []
@@ -11,47 +12,54 @@ const enemiesReducer = (state = initialState, action) => {
                 ...state,
                 enemies: state.enemies.concat(action.payload)
             }
-        case 'ENEMY_DELETE':
+        case 'ENEMY_HIT':
             return {
                 ...state,
-                enemies: state.enemies.filter(enemy => action.payload !== enemy.id)
-            }
-        case 'ENEMY_MOVE':
-            return {
-                ...state,
-                enemies: state.enemies.map(enemy => {
-                    enemy.spriteLocation[0] = (enemy.spriteLocation[0] + 1) % 3
-                    if (enemy.id === action.payload.id) {
-                        enemy.pos = action.payload.position
-                    }
-
+                enemies: state.enemies.map(enemy => { 
+                    if(Math.hypot(enemy.pos[0] - action.payload.x, enemy.pos[1] - action.payload.y) < 16)
+                        enemy.beaten = true
                     return enemy
                 })
+            }
+        case 'ENEMY_UPDATE':
+            return {
+                ...state,
+                enemies: action.payload
             }
         default:
             return state
     }
 }
 
-export const enemyAdd = (enemy) => {
-    store.dispatch({
-        type: 'ENEMY_ADD',
-        payload: { ...enemy, spriteLocation: [0,0] }
+const outOfBounds = (enemies) => {
+    enemies =  enemies.filter(enemy => {
+        const pos = enemy.pos
+        const verticalLimits = 0 <= pos[1] && pos[1] <= MAP_HEIGHT
+        const horizontalLimits = 0 <= pos[0] && pos[0] <= MAP_WIDTH
+
+        if(!(horizontalLimits && verticalLimits)) console.log(enemies)
+
+        return horizontalLimits && verticalLimits
     })
+
+    return enemies
 }
 
-export const enemyMove = (id, position) => {
-    store.dispatch({
-        type: 'ENEMY_MOVE',
-        payload: {id, position}
-    });
+export const enemyAdd = (enemy) => { store.dispatch({ type: 'ENEMY_ADD', payload: { ...enemy, beaten:false, spriteLocation: [0,0] } }) }
+
+export const enemyUpdate = value => { 
+
+    
+    const lalala = outOfBounds(value)
+
+    store.dispatch({ 
+        type: 'ENEMY_UPDATE', 
+        payload: lalala
+    }) 
+
+
 }
 
-export const enemyDelete = (id) => {
-    store.dispatch({
-        type: 'ENEMY_DELETE',
-        payload: id
-    })
-}
+export const hit = value => { store.dispatch({ type: 'ENEMY_HIT', payload: value }) }
 
 export default enemiesReducer

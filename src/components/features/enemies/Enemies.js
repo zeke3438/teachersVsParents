@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { MAP_HEIGHT, MAP_WIDTH, SPRITE_SIZE } from '../../../config/constants'
-import { enemyAdd } from './Reducer'
+import { enemyAdd, enemyUpdate } from './Reducer'
 
 import Enemy from './Enemy'
 
@@ -10,13 +10,13 @@ class Enemies extends Component {
     constructor(props) {
         super(props)
         this.references = []
+        this.positions = []
     }
 
     componentDidMount() {
         this.props.setRef(this)
-        this.insertEnemies(3)
+        this.insertEnemies(5)
     }
-
 
     insertEnemies(cant) {
         let xPositions = MAP_WIDTH / SPRITE_SIZE
@@ -24,17 +24,14 @@ class Enemies extends Component {
         for(let i = 0; i< cant; i++) {    
             let pos = [Math.floor(Math.random() * xPositions) * SPRITE_SIZE, Math.floor(Math.random() * yPositions) * SPRITE_SIZE]
             enemyAdd({ pos, id:((MAP_WIDTH * pos[1]) + pos[0]) })
+            this.positions.push({ pos, id:((MAP_WIDTH * pos[1]) + pos[0]) })
         }
     }
 
-    setRef(obj) {
-        this.references.push(obj);
-    }
-
     update() {
-        this.props.enemies.forEach(enemy => {
-            if (enemy.ref.update) enemy.ref.update(enemy) 
-        })
+        let enemies = this.props.enemies
+        enemies.forEach(enemy => { if (enemy.ref.update) enemy.ref.update(enemy) })
+        enemyUpdate(enemies.map(enemy => {return {...enemy, pos: [enemy.ref.state.x, enemy.ref.state.y]}}))
     }
 
     render(){

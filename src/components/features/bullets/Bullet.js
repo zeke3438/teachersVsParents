@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { BULLET_VELOCITY, MAP_HEIGHT, MAP_WIDTH, SPRITE_SIZE } from '../../../config/constants'
-import { bulletDelete } from './Reducer'
+import { BULLET_VELOCITY, SPRITE_SIZE } from '../../../config/constants'
+import { hit } from '../enemies/Reducer'
 
 import sprite from './bullet.png';
 
@@ -28,11 +28,10 @@ class Bullet extends Component {
         let x = this.props.pos[0] + this.props.dir[0] * BULLET_VELOCITY * ((this.props.clock - offset)/1000)
         let y = this.props.pos[1] + this.props.dir[1] * BULLET_VELOCITY * ((this.props.clock - offset)/1000)
         this.setState({
-            deleted: !(0 <= x && x <= MAP_WIDTH && 0 <= y && y <= MAP_HEIGHT),
             x: x,
             y: y
         })
-        if (this.state.deleted) bulletDelete(this.props.id)
+        hit({ x, y, id:this.props.id })
     }
 
     newPosition() {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { bulletsUpdate } from './Reducer'
 import { MAP_HEIGHT } from '../../../config/constants'
 
 import Bullet from './Bullet'
@@ -23,6 +24,7 @@ class Bullets extends Component {
         this.props.bullets.forEach(bullet => {
             if (bullet.ref && bullet.ref.update) bullet.ref.update()
         })
+        bulletsUpdate(this.props.bullets.map(bullet => {return {...bullet, x:bullet.ref.state.x, y:bullet.ref.state.y} }))
     }
 
     render(){
